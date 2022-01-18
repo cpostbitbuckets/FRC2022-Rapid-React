@@ -1,12 +1,7 @@
 {
   "HALProvider": {
     "Other Devices": {
-      "Talon FX[5]": {
-        "header": {
-          "open": true
-        }
-      },
-      "Talon FX[5]/Fwd Limit": {
+      "Talon FX[2]/Integrated Sensor": {
         "header": {
           "open": true
         }
@@ -16,17 +11,12 @@
           "open": true
         }
       },
-      "Talon FX[5]/Rev Limit": {
-        "header": {
-          "open": true
-        }
-      },
       "Talon FX[6]": {
         "header": {
           "open": true
         }
       },
-      "Talon FX[7]": {
+      "Talon FX[6]/Integrated Sensor": {
         "header": {
           "open": true
         }
@@ -84,6 +74,9 @@
   "NetworkTables": {
     "Shuffleboard": {
       "Drivetrain": {
+        "Front Left Module": {
+          "open": true
+        },
         "open": true
       },
       "open": true

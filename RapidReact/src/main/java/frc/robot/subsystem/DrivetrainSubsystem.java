@@ -4,6 +4,7 @@
 
 package frc.robot.subsystem;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
@@ -24,6 +25,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
 import frc.robot.config.Config;
 import frc.robot.utils.modifiedswervelib.BitBucketsMk4SwerveModuleHelper;
 import java.util.List;
@@ -58,13 +60,23 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   // cause the angle reading to increase until it wraps back over to zero.
   //  Remove if you are using a Pigeon
   //  Uncomment if you are using a NavX
-  private AHRS navX;
+  public AHRS navX;
 
   //Swerve Modules
-  private SwerveModule moduleFrontLeft;
-  private SwerveModule moduleFrontRight;
-  private SwerveModule moduleBackLeft;
-  private SwerveModule moduleBackRight;
+  public SwerveModule moduleFrontLeft;
+  public SwerveModule moduleFrontRight;
+  public SwerveModule moduleBackLeft;
+  public SwerveModule moduleBackRight;
+
+  public WPI_TalonFX driveMotorFrontLeft;
+  public WPI_TalonFX driveMotorFrontRight;
+  public WPI_TalonFX driveMotorBackLeft;
+  public WPI_TalonFX driveMotorBackRight;
+
+  public WPI_TalonFX steerMotorFrontLeft;
+  public WPI_TalonFX steerMotorFrontRight;
+  public WPI_TalonFX steerMotorBackLeft;
+  public WPI_TalonFX steerMotorBackRight;
 
   private Translation2d moduleFrontLeftLocation;
   private Translation2d moduleFrontRightLocation;
@@ -138,14 +150,14 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     trajectory =
       TrajectoryGenerator.generateTrajectory(
         new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-        List.of(new Translation2d(5,3), new Translation2d(10, 3)),
+        List.of(new Translation2d(5, 3), new Translation2d(10, 3)),
         new Pose2d(10, 5, Rotation2d.fromDegrees(0)),
         new TrajectoryConfig(Units.feetToMeters(3.0), Units.feetToMeters(3.0))
       );
 
-    this.field = new Field2d();
-    SmartDashboard.putData(field);
-    this.field.getObject("traj").setTrajectory(trajectory);
+    //    this.field = new Field2d();
+    //    SmartDashboard.putData(field);
+    //    this.field.getObject("traj").setTrajectory(trajectory);
 
     this.initializeModules();
   }
@@ -153,22 +165,15 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   private void initializeModules() {
     ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
 
-    // There are 4 methods you can call to create your swerve modules.
-    // The method you use depends on what motors you are using.
-    //
-    // Mk3SwerveModuleHelper.createFalcon500(...)
-    //   Your module has two Falcon 500s on it. One for steering and one for driving.
-    //
-    // Mk3SwerveModuleHelper.createNeo(...)
-    //   Your module has two NEOs on it. One for steering and one for driving.
-    //
-    // Mk3SwerveModuleHelper.createFalcon500Neo(...)
-    //   Your module has a Falcon 500 and a NEO on it. The Falcon 500 is for driving and the NEO is for steering.
-    //
-    // Mk3SwerveModuleHelper.createNeoFalcon500(...)
-    //   Your module has a NEO and a Falcon 500 on it. The NEO is for driving and the Falcon 500 is for steering.
-    //
-    // Similar helpers also exist for Mk4 modules using the Mk4SwerveModuleHelper class.
+    driveMotorFrontLeft = new WPI_TalonFX(config.frontLeftModuleDriveMotor);
+    driveMotorFrontRight = new WPI_TalonFX(config.frontRightModuleDriveMotor);
+    driveMotorBackLeft = new WPI_TalonFX(config.backLeftModuleDriveMotor);
+    driveMotorBackRight = new WPI_TalonFX(config.backRightModuleDriveMotor);
+
+    steerMotorFrontLeft = new WPI_TalonFX(config.frontLeftModuleSteerMotor);
+    steerMotorFrontRight = new WPI_TalonFX(config.frontRightModuleSteerMotor);
+    steerMotorBackLeft = new WPI_TalonFX(config.backLeftModuleSteerMotor);
+    steerMotorBackRight = new WPI_TalonFX(config.backRightModuleSteerMotor);
 
     // By default we will use Falcon 500s in standard configuration. But if you use a different configuration or motors
     // you MUST change it. If you do not, your code will crash on startup.
@@ -183,13 +188,13 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
         // This can either be STANDARD or FAST depending on your gear configuration
         BitBucketsMk4SwerveModuleHelper.GearRatio.L2,
         // This is the ID of the drive motor
-        config.frontLeftModuleDriveMotor,
+        driveMotorFrontLeft,
         // This is the ID of the steer motor
-        config.frontLeftModuleSteerMotor,
+        steerMotorFrontLeft,
         // This is the ID of the steer encoder
         config.frontLeftModuleSteerEncoder,
         // This is how much the steer encoder is offset from true zero (In our case, zero is facing straight forward)
-        config.drive.frontLeftModuleSteerOffset
+        Robot.isReal() ? config.drive.frontLeftModuleSteerOffset : 0
       );
 
     // We will do the same for the other modules
@@ -200,10 +205,10 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
           .withSize(2, 4)
           .withPosition(2, 0),
         BitBucketsMk4SwerveModuleHelper.GearRatio.L2,
-        config.frontRightModuleDriveMotor,
-        config.frontRightModuleSteerMotor,
+        driveMotorFrontRight,
+        steerMotorFrontRight,
         config.frontRightModuleSteerEncoder,
-        config.drive.frontRightModuleSteerOffset
+        Robot.isReal() ? config.drive.frontRightModuleSteerOffset : 0
       );
 
     moduleBackLeft =
@@ -213,10 +218,10 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
           .withSize(2, 4)
           .withPosition(4, 0),
         BitBucketsMk4SwerveModuleHelper.GearRatio.L2,
-        config.backLeftModuleDriveMotor,
-        config.backLeftModuleSteerMotor,
+        driveMotorBackLeft,
+        steerMotorBackLeft,
         config.backLeftModuleSteerEncoder,
-        config.drive.backLeftModuleSteerOffset
+        Robot.isReal() ? config.drive.backLeftModuleSteerOffset : 0
       );
 
     moduleBackRight =
@@ -226,10 +231,10 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
           .withSize(2, 4)
           .withPosition(6, 0),
         BitBucketsMk4SwerveModuleHelper.GearRatio.L2,
-        config.backRightModuleDriveMotor,
-        config.backRightModuleSteerMotor,
+        driveMotorBackRight,
+        steerMotorBackRight,
         config.backRightModuleSteerEncoder,
-        config.drive.backRightModuleSteerOffset
+        Robot.isReal() ? config.drive.backRightModuleSteerOffset : 0
       );
   }
 
@@ -301,12 +306,11 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
       this.config.maxVoltage,
       states[3].angle.getRadians()
     );
+    //    var gyroAngle = Rotation2d.fromDegrees(-navX.getAngle());
+    //    pose =
+    //      odometry.update(gyroAngle, states[0], states[1], states[2], states[3]);
 
-    var gyroAngle = Rotation2d.fromDegrees(-navX.getAngle());
-    pose =
-      odometry.update(gyroAngle, states[0], states[1], states[2], states[3]);
-
-    field.setRobotPose(odometry.getPoseMeters());
+    //    field.setRobotPose(odometry.getPoseMeters());
   }
 
   public void stop() {
@@ -317,5 +321,4 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   public void disable() {
     stop();
   }
-
 }
