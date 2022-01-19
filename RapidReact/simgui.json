@@ -74,7 +74,16 @@
   "NetworkTables": {
     "Shuffleboard": {
       "Drivetrain": {
+        "Back Left Module": {
+          "open": true
+        },
+        "Back Right Module": {
+          "open": true
+        },
         "Front Left Module": {
+          "open": true
+        },
+        "Front Right Module": {
           "open": true
         },
         "open": true
@@ -85,7 +94,19 @@
       "DrivetrainSubsystem": {
         "open": true
       },
-      "open": true
+      "open": true,
+      "steerMotor2": {
+        "open": true
+      },
+      "steerMotor4": {
+        "open": true
+      },
+      "steerMotor6": {
+        "open": true
+      },
+      "steerMotor8": {
+        "open": true
+      }
     }
   },
   "Plot": {

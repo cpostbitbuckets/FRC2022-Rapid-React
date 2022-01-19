@@ -9,6 +9,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.swervedrivespecialties.swervelib.*;
 import com.swervedrivespecialties.swervelib.ctre.CtreUtils;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
 
 public final class WPI_TalonFXSteerControllerFactoryBuilder {
 
@@ -252,13 +254,15 @@ public final class WPI_TalonFXSteerControllerFactoryBuilder {
 
     @Override
     public void setReferenceAngle(double referenceAngleRadians) {
+      SmartDashboard.putNumber("steerMotor" + motor.getDeviceID() + "/referenceAngle", Math.toDegrees(referenceAngleRadians));
+
       double currentAngleRadians =
         motor.getSelectedSensorPosition() * motorEncoderPositionCoefficient;
 
       // Reset the NEO's encoder periodically when the module is not rotating.
       // Sometimes (~5% of the time) when we initialize, the absolute encoder isn't fully set up, and we don't
       // end up getting a good reading. If we reset periodically this won't matter anymore.
-      if (
+      if (Robot.isReal() && // don't do the absolute encoder stuff on the sim robot
         motor.getSelectedSensorVelocity() *
         motorEncoderVelocityCoefficient <
         ENCODER_RESET_MAX_ANGULAR_VELOCITY

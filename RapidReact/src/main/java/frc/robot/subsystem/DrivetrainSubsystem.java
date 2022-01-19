@@ -5,6 +5,7 @@
 package frc.robot.subsystem;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.sensors.CANCoder;
 import com.kauailabs.navx.frc.AHRS;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
@@ -77,6 +78,11 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   public WPI_TalonFX steerMotorFrontRight;
   public WPI_TalonFX steerMotorBackLeft;
   public WPI_TalonFX steerMotorBackRight;
+
+  public CANCoder canCoderFrontLeft;
+  public CANCoder canCoderFrontRight;
+  public CANCoder canCoderBackLeft;
+  public CANCoder canCoderBackRight;
 
   private Translation2d moduleFrontLeftLocation;
   private Translation2d moduleFrontRightLocation;
@@ -175,6 +181,12 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     steerMotorBackLeft = new WPI_TalonFX(config.backLeftModuleSteerMotor);
     steerMotorBackRight = new WPI_TalonFX(config.backRightModuleSteerMotor);
 
+    canCoderFrontLeft = new CANCoder(config.frontLeftModuleSteerEncoder);
+    canCoderFrontRight = new CANCoder(config.frontRightModuleSteerEncoder);
+    canCoderBackLeft = new CANCoder(config.backLeftModuleSteerEncoder);
+    canCoderBackRight = new CANCoder(config.backRightModuleSteerEncoder);
+
+
     // By default we will use Falcon 500s in standard configuration. But if you use a different configuration or motors
     // you MUST change it. If you do not, your code will crash on startup.
     // Setup motor configuration
@@ -192,7 +204,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
         // This is the ID of the steer motor
         steerMotorFrontLeft,
         // This is the ID of the steer encoder
-        config.frontLeftModuleSteerEncoder,
+        canCoderFrontLeft,
         // This is how much the steer encoder is offset from true zero (In our case, zero is facing straight forward)
         Robot.isReal() ? config.drive.frontLeftModuleSteerOffset : 0
       );
@@ -207,7 +219,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
         BitBucketsMk4SwerveModuleHelper.GearRatio.L2,
         driveMotorFrontRight,
         steerMotorFrontRight,
-        config.frontRightModuleSteerEncoder,
+        canCoderFrontRight,
         Robot.isReal() ? config.drive.frontRightModuleSteerOffset : 0
       );
 
@@ -220,7 +232,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
         BitBucketsMk4SwerveModuleHelper.GearRatio.L2,
         driveMotorBackLeft,
         steerMotorBackLeft,
-        config.backLeftModuleSteerEncoder,
+        canCoderBackLeft,
         Robot.isReal() ? config.drive.backLeftModuleSteerOffset : 0
       );
 
@@ -233,7 +245,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
         BitBucketsMk4SwerveModuleHelper.GearRatio.L2,
         driveMotorBackRight,
         steerMotorBackRight,
-        config.backRightModuleSteerEncoder,
+        canCoderBackRight,
         Robot.isReal() ? config.drive.backRightModuleSteerOffset : 0
       );
   }

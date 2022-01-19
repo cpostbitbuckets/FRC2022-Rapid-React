@@ -1,6 +1,7 @@
 package frc.robot.simulator;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.sensors.CANCoder;
 import edu.wpi.first.math.geometry.Pose2d;
 
 public class RobotModel {
@@ -19,7 +20,11 @@ public class RobotModel {
     WPI_TalonFX steerMotorFrontLeft,
     WPI_TalonFX steerMotorFrontRight,
     WPI_TalonFX steerMotorBackLeft,
-    WPI_TalonFX steerMotorBackRight
+    WPI_TalonFX steerMotorBackRight,
+    CANCoder canCoderFrontLeft,
+    CANCoder canCoderFrontRight,
+    CANCoder canCoderBackLeft,
+    CANCoder canCoderBackRight
   ) {
     dt =
       new DrivetrainModel(
@@ -30,7 +35,11 @@ public class RobotModel {
         steerMotorFrontLeft,
         steerMotorFrontRight,
         steerMotorBackLeft,
-        steerMotorBackRight
+        steerMotorBackRight,
+        canCoderFrontLeft,
+        canCoderFrontRight,
+        canCoderBackLeft,
+        canCoderBackRight
       );
     reset(Constants.DFLT_START_POSE);
   }

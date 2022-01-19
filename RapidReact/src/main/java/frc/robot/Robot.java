@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.sensors.CANCoder;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
@@ -45,9 +46,6 @@ public class Robot extends TimedRobot {
 
   private final List<BitBucketsSubsystem> robotSubsystems = new ArrayList<>();
 
-  //  private QuadSwerveSim quadSwerveSim;
-  //  private List<SwerveModuleSim> swerveModuleSims;
-  //  private SPIAccelerometerSim gyroSim;
 
   // Assumed starting location of the robot. Auto routines will pick their own location and update this.
   public static final Pose2d DFLT_START_POSE = new Pose2d(
@@ -206,33 +204,14 @@ public class Robot extends TimedRobot {
           drivetrainSubsystem.steerMotorFrontLeft,
           drivetrainSubsystem.steerMotorFrontRight,
           drivetrainSubsystem.steerMotorBackLeft,
-          drivetrainSubsystem.steerMotorBackRight
+          drivetrainSubsystem.steerMotorBackRight,
+          drivetrainSubsystem.canCoderFrontLeft,
+          drivetrainSubsystem.canCoderFrontRight,
+          drivetrainSubsystem.canCoderBackLeft,
+          drivetrainSubsystem.canCoderBackRight
         );
       simModel.reset(DFLT_START_POSE);
     }
-    //    Supplier<SwerveModuleSim> moduleFactory = () -> new SwerveModuleSim(
-    //            DCMotor.getFalcon500(1),
-    //            DCMotor.getFalcon500(1),
-    //            SdsModuleConfigurations.MK4_L2.getWheelDiameter() / 2,
-    //            SdsModuleConfigurations.MK4_L2.getSteerReduction(),
-    //            SdsModuleConfigurations.MK4_L2.getDriveReduction(),
-    //            SdsModuleConfigurations.MK4_L2.getSteerReduction(),
-    //            SdsModuleConfigurations.MK4_L2.getDriveReduction(),
-    //            1.1,
-    //            0.8,
-    //            16.0,
-    //            0.001
-    //    );
-    //
-    //    swerveModuleSims = List.of(
-    //            moduleFactory.get(),
-    //            moduleFactory.get(),
-    //            moduleFactory.get(),
-    //            moduleFactory.get()
-    //    );
-    //    quadSwerveSim = new QuadSwerveSim(.75, .75, 45, 1, swerveModuleSims);
-    //
-    //    gyroSim = new SPIAccelerometerSim(SPI.Port.kMXP.value);
 
   }
 
@@ -241,52 +220,6 @@ public class Robot extends TimedRobot {
     this.robotSubsystems.forEach(BitBucketsSubsystem::simulationPeriodic);
 
     simModel.update(isDisabled());
-    //    // update the swerve module sims
-    //    swerveModuleSims.get(0).setInputVoltages(
-    //            drivetrainSubsystem.driveMotorFrontLeft.getSimCollection().getMotorOutputLeadVoltage(),
-    //            drivetrainSubsystem.steerMotorFrontLeft.getSimCollection().getMotorOutputLeadVoltage()
-    //    );
-    //    swerveModuleSims.get(1).setInputVoltages(
-    //            drivetrainSubsystem.driveMotorFrontRight.getSimCollection().getMotorOutputLeadVoltage(),
-    //            drivetrainSubsystem.steerMotorFrontRight.getSimCollection().getMotorOutputLeadVoltage()
-    //    );
-    //    swerveModuleSims.get(2).setInputVoltages(
-    //            drivetrainSubsystem.driveMotorBackLeft.getSimCollection().getMotorOutputLeadVoltage(),
-    //            drivetrainSubsystem.steerMotorBackLeft.getSimCollection().getMotorOutputLeadVoltage()
-    //    );
-    //    swerveModuleSims.get(3).setInputVoltages(
-    //            drivetrainSubsystem.driveMotorBackRight.getSimCollection().getMotorOutputLeadVoltage(),
-    //            drivetrainSubsystem.steerMotorBackRight.getSimCollection().getMotorOutputLeadVoltage()
-    //    );
-    //
-    //    // run the swerve sim
-    //    quadSwerveSim.update(0.020);
-    //
-    //    drivetrainSubsystem.driveMotorFrontLeft.getSimCollection().setIntegratedSensorRawPosition((int) (swerveModuleSims.get(0).getWheelEncoderPositionRev() * 2048));
-    //    drivetrainSubsystem.driveMotorFrontRight.getSimCollection().setIntegratedSensorRawPosition((int) (swerveModuleSims.get(1).getWheelEncoderPositionRev() * 2048));
-    //    drivetrainSubsystem.driveMotorBackLeft.getSimCollection().setIntegratedSensorRawPosition((int) (swerveModuleSims.get(2).getWheelEncoderPositionRev() * 2048));
-    //    drivetrainSubsystem.driveMotorBackRight.getSimCollection().setIntegratedSensorRawPosition((int) (swerveModuleSims.get(3).getWheelEncoderPositionRev() * 2048));
-    //
-    //    drivetrainSubsystem.steerMotorFrontLeft.getSimCollection().setIntegratedSensorRawPosition((int) (swerveModuleSims.get(0).getAzimuthEncoderPositionRev() * 2048));
-    //    drivetrainSubsystem.steerMotorFrontRight.getSimCollection().setIntegratedSensorRawPosition((int) (swerveModuleSims.get(1).getAzimuthEncoderPositionRev() * 2048));
-    //    drivetrainSubsystem.steerMotorBackLeft.getSimCollection().setIntegratedSensorRawPosition((int) (swerveModuleSims.get(2).getAzimuthEncoderPositionRev() * 2048));
-    //    drivetrainSubsystem.steerMotorBackRight.getSimCollection().setIntegratedSensorRawPosition((int) (swerveModuleSims.get(3).getAzimuthEncoderPositionRev() * 2048));
-    //
-    //    drivetrainSubsystem.driveMotorFrontLeft.getSimCollection().setIntegratedSensorVelocity((int) (swerveModuleSims.get(0).getWheelMotorSpeed() * 2048));
-    //    drivetrainSubsystem.driveMotorFrontRight.getSimCollection().setIntegratedSensorVelocity((int) (swerveModuleSims.get(1).getWheelMotorSpeed() * 2048));
-    //    drivetrainSubsystem.driveMotorBackLeft.getSimCollection().setIntegratedSensorVelocity((int) (swerveModuleSims.get(2).getWheelMotorSpeed() * 2048));
-    //    drivetrainSubsystem.driveMotorBackRight.getSimCollection().setIntegratedSensorVelocity((int) (swerveModuleSims.get(3).getWheelMotorSpeed() * 2048));
-    //
-    //    drivetrainSubsystem.steerMotorFrontLeft.getSimCollection().setIntegratedSensorVelocity((int) (swerveModuleSims.get(0).getSteerMotorSpeed() * 2048));
-    //    drivetrainSubsystem.steerMotorFrontRight.getSimCollection().setIntegratedSensorVelocity((int) (swerveModuleSims.get(1).getSteerMotorSpeed() * 2048));
-    //    drivetrainSubsystem.steerMotorBackLeft.getSimCollection().setIntegratedSensorVelocity((int) (swerveModuleSims.get(2).getSteerMotorSpeed() * 2048));
-    //    drivetrainSubsystem.steerMotorBackRight.getSimCollection().setIntegratedSensorVelocity((int) (swerveModuleSims.get(3).getSteerMotorSpeed() * 2048));
-    //
-    //    // update the navx
-    //    int dev = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[0]");
-    //    SimDouble angle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(dev, "Yaw"));
-    //    // NavX expects clockwise positive, but sim outputs clockwise negative
-    //    angle.set(Math.IEEEremainder(-quadSwerveSim.getCurPose().getRotation().getDegrees(), 360));
   }
 
   /**

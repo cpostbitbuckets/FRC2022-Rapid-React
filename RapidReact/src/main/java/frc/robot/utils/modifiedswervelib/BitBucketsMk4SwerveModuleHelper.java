@@ -1,6 +1,7 @@
 package frc.robot.utils.modifiedswervelib;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.sensors.CANCoder;
 import com.swervedrivespecialties.swervelib.DriveControllerFactory;
 import com.swervedrivespecialties.swervelib.Mk4ModuleConfiguration;
 import com.swervedrivespecialties.swervelib.ModuleConfiguration;
@@ -8,8 +9,6 @@ import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SteerControllerFactory;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 import com.swervedrivespecialties.swervelib.SwerveModuleFactory;
-import com.swervedrivespecialties.swervelib.ctre.CanCoderAbsoluteConfiguration;
-import com.swervedrivespecialties.swervelib.ctre.CanCoderFactoryBuilder;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 
 public final class BitBucketsMk4SwerveModuleHelper {
@@ -25,15 +24,14 @@ public final class BitBucketsMk4SwerveModuleHelper {
       .build();
   }
 
-  private static SteerControllerFactory<?, WPI_TalonFXSteerConfiguration<CanCoderAbsoluteConfiguration>> getWPI_TalonFXSteerFactory(
+  private static SteerControllerFactory<?, WPI_TalonFXSteerConfiguration<BitBucketsCanCoderAbsoluteConfiguration>> getWPI_TalonFXSteerFactory(
     Mk4ModuleConfiguration configuration
   ) {
     return new WPI_TalonFXSteerControllerFactoryBuilder()
       .withVoltageCompensation(configuration.getNominalVoltage())
-      //                .withPidConstants(0.2, 0.0, 0.1) //  original
-      .withPidConstants(0.02, 0.0, 0.1) // lower kP for sim
+      .withPidConstants(0.2, 0.0, 0.1) //  original
       .withCurrentLimit(configuration.getSteerCurrentLimit())
-      .build(new CanCoderFactoryBuilder().withReadingUpdatePeriod(100).build());
+      .build(new BitBucketsCanCoderFactoryBuilder().withReadingUpdatePeriod(100).build());
   }
 
   /**
@@ -45,7 +43,7 @@ public final class BitBucketsMk4SwerveModuleHelper {
    * @param gearRatio        The gearing configuration the module is in.
    * @param driveMotor       The Falcon 500 drive motor.
    * @param steerMotor       The instance of the WPI_TalonFX to use
-   * @param steerEncoderPort The CAN ID of the steer CANCoder.
+   * @param steerEncoder     The steer CANCoder.
    * @param steerOffset      The offset of the CANCoder in radians.
    * @return The configured swerve module.
    */
@@ -55,7 +53,7 @@ public final class BitBucketsMk4SwerveModuleHelper {
     GearRatio gearRatio,
     WPI_TalonFX driveMotor,
     WPI_TalonFX steerMotor,
-    int steerEncoderPort,
+    CANCoder steerEncoder,
     double steerOffset
   ) {
     return new SwerveModuleFactory<>(
@@ -68,7 +66,7 @@ public final class BitBucketsMk4SwerveModuleHelper {
         driveMotor,
         new WPI_TalonFXSteerConfiguration<>(
           steerMotor,
-          new CanCoderAbsoluteConfiguration(steerEncoderPort, steerOffset)
+          new BitBucketsCanCoderAbsoluteConfiguration(steerEncoder, steerOffset)
         )
       );
   }
@@ -81,7 +79,7 @@ public final class BitBucketsMk4SwerveModuleHelper {
    * @param gearRatio        The gearing configuration the module is in.
    * @param driveMotor       The Falcon 500 drive motor.
    * @param steerMotor       The Falcon 500 steer motor.
-   * @param steerEncoderPort The CAN ID of the steer CANCoder.
+   * @param steerEncoder     The steer CANCoder.
    * @param steerOffset      The offset of the CANCoder in radians.
    * @return The configured swerve module.
    */
@@ -90,7 +88,7 @@ public final class BitBucketsMk4SwerveModuleHelper {
     GearRatio gearRatio,
     WPI_TalonFX driveMotor,
     WPI_TalonFX steerMotor,
-    int steerEncoderPort,
+    CANCoder steerEncoder,
     double steerOffset
   ) {
     return createWPI_TalonFX(
@@ -99,7 +97,7 @@ public final class BitBucketsMk4SwerveModuleHelper {
       gearRatio,
       driveMotor,
       steerMotor,
-      steerEncoderPort,
+      steerEncoder,
       steerOffset
     );
   }
