@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class QuadSwerveSim {
 
@@ -195,5 +196,12 @@ public class QuadSwerveSim {
 
   public Pose2d getCurPose() {
     return curPose;
+  }
+
+  public List<Pose2d> getModulePoses() {
+    return modules
+            .stream()
+            .map(m -> new Pose2d(m.getModulePose().getTranslation(), m.getModulePose().getRotation().rotateBy(m.getCurAzmthAngle())))
+            .collect(Collectors.toList());
   }
 }

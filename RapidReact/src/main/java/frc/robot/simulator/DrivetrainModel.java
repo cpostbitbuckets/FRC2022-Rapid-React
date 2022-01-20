@@ -84,6 +84,8 @@ class DrivetrainModel {
     azmthMotorEncoders.add(canCoderBackLeft);
     azmthMotorEncoders.add(canCoderBackRight);
 
+    
+
     gyro = new SimGyroSensorModel();
 
     field = PoseTelemetry.field;
@@ -149,7 +151,7 @@ class DrivetrainModel {
             .get(idx)
             .getSimCollection()
             .getMotorOutputLeadVoltage() *
-          batteryVoltage;
+          batteryVoltage * -1;
         modules.get(idx).setInputVoltages(wheelVolts, azmthVolts);
       }
     }
@@ -178,6 +180,7 @@ class DrivetrainModel {
 
     // Update associated devices based on drivetrain motion
     field.setRobotPose(endPose);
+    field.getObject("Swerve Modules").setPoses(swerveDt.getModulePoses());
     gyro.update(startPose, endPose);
   }
 }

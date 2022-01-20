@@ -180,4 +180,8 @@ public class SwerveModuleSim {
   Pose2d getModulePose() {
     return curModulePose;
   }
+
+  Rotation2d getCurAzmthAngle() {
+    return curAzmthAngle;
+  }
 }

@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.config.Config;
 import frc.robot.utils.modifiedswervelib.BitBucketsMk4SwerveModuleHelper;
@@ -90,6 +89,9 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   private Translation2d moduleBackRightLocation;
 
   private ChassisSpeeds chassisSpeeds;
+  
+  // update this to go faster, 1.0 is full speed
+  private double speedFactor = 0.0;
 
   private Pose2d pose;
   private SwerveDriveOdometry odometry;
@@ -186,6 +188,11 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     canCoderBackLeft = new CANCoder(config.backLeftModuleSteerEncoder);
     canCoderBackRight = new CANCoder(config.backRightModuleSteerEncoder);
 
+//    if (Robot.isSimulation()) {
+//      // start the right side flipped in sim mode
+//      canCoderFrontRight.getSimCollection().setRawPosition(-8192 / 2);
+//      canCoderBackLeft.getSimCollection().setRawPosition(-8192 / 2);
+//    }
 
     // By default we will use Falcon 500s in standard configuration. But if you use a different configuration or motors
     // you MUST change it. If you do not, your code will crash on startup.
@@ -297,25 +304,25 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     moduleFrontLeft.set(
       states[0].speedMetersPerSecond /
       maxVelocity_metersPerSecond *
-      this.config.maxVoltage,
+      this.config.maxVoltage * speedFactor,
       states[0].angle.getRadians()
     );
     moduleFrontRight.set(
       states[1].speedMetersPerSecond /
       maxVelocity_metersPerSecond *
-      this.config.maxVoltage,
+      this.config.maxVoltage * speedFactor,
       states[1].angle.getRadians()
     );
     moduleBackLeft.set(
       states[2].speedMetersPerSecond /
       maxVelocity_metersPerSecond *
-      this.config.maxVoltage,
+      this.config.maxVoltage * speedFactor,
       states[2].angle.getRadians()
     );
     moduleBackRight.set(
       states[3].speedMetersPerSecond /
       maxVelocity_metersPerSecond *
-      this.config.maxVoltage,
+      this.config.maxVoltage * speedFactor,
       states[3].angle.getRadians()
     );
     //    var gyroAngle = Rotation2d.fromDegrees(-navX.getAngle());
